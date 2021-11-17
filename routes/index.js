@@ -7,7 +7,7 @@ router.get("/", (req, res, next) => {
   TodoModel.find()
     .then((todos) => {
       
-      res.render("index.hbs", {todos});
+      res.render("kaj.hbs", {todos});
     })
     .catch(() => {
       next('Todo find failed')

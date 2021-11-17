@@ -13,38 +13,35 @@ router.get('/todos/create', (req, res, next) => {
 
 
 // Handles POST requests to `/todos/create`
-router.post('/todos/create', (req, res, next) => {
+router.post('/todos/create', async (req, res, next) => {
     //all the form data will be available inside req.body
     console.log(  req.body )
     const {title, description} = req.body
     //Insert the title and description in the DB
 
     //IMPORT YOUR TODOMODEL AT THE TOP OF THE FILE
-    TodoModel.create({title, description})
-        .then(() => {
-            //redirect the user to home page
+    try {
+        await TodoModel.create({title, description})
+        res.redirect('/')
+    }
+    catch(err){
+        next('Todo creation failed')
+    }
 
-            // redirects it to a certain url path
-            res.redirect('/')
-        })
-        .catch(() => {
-            next('Todo creation failed')
-        })
 
 })
 
 // Handles GET requests to `/todo/:somethingDynamic`
-router.get('/todo/:todoId', (req, res, next) => {
+router.get('/todo/:todoId', async (req, res, next) => {
     const {todoId} = req.params
 
-    TodoModel.findById(todoId)
-        .then((todo) => {
-            //render some HBS file with that todo information
-            res.render('todos/detail.hbs', {todo})
-        })
-        .catch(() => {
-            next('Single todo fetch failed')
-        })
+    try{
+        let todo =  await TodoModel.findById(todoId)
+        res.render('todos/detail.hbs', {todo})
+    }
+    catch(err){
+        next('Single todo fetch failed')
+    }
     
 })
 
